@@ -1,5 +1,5 @@
-import { FlexStyle, TextStyle, TransformsStyle, ViewStyle } from 'react-native';
 import { BaseThemeSchema } from './schema';
+import { CSSProperties } from 'react';
 declare const spacingProperties: {
     margin: boolean;
     marginTop: boolean;
@@ -94,19 +94,6 @@ declare const borderColorProperties: {
     borderLeftColor: boolean;
     borderBottomColor: boolean;
 };
-declare const shadowProperties: {
-    shadowOpacity: boolean;
-    shadowOffset: boolean;
-    shadowRadius: boolean;
-    elevation: boolean;
-};
-declare const textShadowProperties: {
-    textShadowOffset: boolean;
-    textShadowRadius: boolean;
-};
-declare const tintColorProperties: {
-    tintColor: boolean;
-};
 export declare type RawColor = `#${string}` | `hsl(${string})` | `rgba(${string})` | `rgb(${string})`;
 export interface ColorProps<TColors extends string> {
     color?: TColors | RawColor;
@@ -124,33 +111,20 @@ export declare type SpacingProps<TSpacing extends string> = {
     [Key in keyof typeof spacingProperties | keyof typeof spacingPropertiesShorthand]?: TSpacing | number | `%${number}`;
 };
 export declare type TypographyProps = {
-    [Key in keyof typeof typographyProperties]?: TextStyle[Key];
+    [Key in keyof typeof typographyProperties]?: CSSProperties[Key];
 };
 export declare type LayoutProps = {
-    [Key in keyof typeof layoutProperties]?: FlexStyle[Key];
+    [Key in keyof typeof layoutProperties]?: CSSProperties[Key];
 };
 export declare type PositionProps = {
-    [Key in keyof typeof positionProperties]?: FlexStyle[Key];
+    [Key in keyof typeof positionProperties]?: CSSProperties[Key];
 };
 export declare type BorderProps<TColors extends string, TBorderRadii extends string> = {
-    [Key in keyof typeof borderProperties]?: ViewStyle[Key];
+    [Key in keyof typeof borderProperties]?: CSSProperties[Key];
 } & {
     [Key in keyof typeof borderColorProperties]?: TColors | RawColor;
 } & {
     [Key in keyof typeof borderRadiusProperties]?: TBorderRadii | number;
-};
-export declare type ShadowProps<TColors extends string> = {
-    [Key in keyof typeof shadowProperties]?: ViewStyle[Key];
-} & {
-    shadowColor?: TColors | RawColor;
-};
-export declare type TextShadowProps<TColors extends string> = {
-    [Key in keyof typeof textShadowProperties]?: TextStyle[Key];
-} & {
-    textShadowColor?: TColors | RawColor;
-};
-export declare type TintColorProps<TColors extends string> = {
-    [Key in keyof typeof tintColorProperties]?: TColors | RawColor;
 };
 export declare const transformProperty: {
     [key: string]: (theme: BaseThemeSchema<any, any, any>, value: string) => number | string;
@@ -160,5 +134,5 @@ export declare const transformPropertyKey: {
 };
 export declare const transformKeys: Set<string>;
 export declare const allProperties: Set<string>;
-export declare type AllProps<TColors extends string, TSpacing extends string, TBorderRadii extends string> = BackgroundColorProps<TColors> & ColorProps<TColors> & OpacityProps & SpacingProps<TSpacing> & TypographyProps & LayoutProps & PositionProps & BorderProps<TColors, TBorderRadii> & ShadowProps<TColors> & TextShadowProps<TColors> & TintColorProps<TColors> & TransformsStyle;
+export declare type AllProps<TColors extends string, TSpacing extends string, TBorderRadii extends string> = BackgroundColorProps<TColors> & ColorProps<TColors> & OpacityProps & SpacingProps<TSpacing> & TypographyProps & LayoutProps & PositionProps & BorderProps<TColors, TBorderRadii>;
 export {};

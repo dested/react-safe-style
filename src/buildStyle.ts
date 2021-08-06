@@ -1,5 +1,4 @@
-import {TransformsStyle, FlexStyle, TextStyle, ViewStyle, StyleProp} from 'react-native';
-import {useEffect} from 'react';
+import {CSSProperties, useEffect} from 'react';
 import {allProperties, AllProps, transformKeys, transformProperty, transformPropertyKey} from './styleProps';
 import {fromEntries, safeEntries} from './utils';
 import {SafeStyleSchema, StyleStructure} from './schema';
@@ -16,19 +15,15 @@ export function startTheme<TColors extends string, TSpacing extends string, TBor
       }
     ) => {
       return {
-        addDefaultClasses: (defaultClasses: {text?: TBaseClassesKeys[]; view?: TBaseClassesKeys[]}) => {
+        addDefaultClasses: (defaultClasses: {view?: TBaseClassesKeys[]}) => {
           return {
-            addClasses: <TViewsKeys extends string, TTextsKeys extends string>(
+            addClasses: <TViewsKeys extends string>(
               views: {
                 [className in TViewsKeys]: StyleStructure<TColors, TSpacing, TBorderRadii, TBaseClassesKeys>;
-              },
-              texts: {
-                [className in TTextsKeys]: StyleStructure<TColors, TSpacing, TBorderRadii, TBaseClassesKeys>;
               }
-            ): SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys> => {
+            ): SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys> => {
               let baseKeys = new Set(Object.keys(baseClasses));
               let viewKeys = new Set(Object.keys(views));
-              let textKeys = new Set(Object.keys(texts));
               return {
                 borderRadii: theme.borderRadii,
                 colors: theme.colors,
@@ -36,11 +31,9 @@ export function startTheme<TColors extends string, TSpacing extends string, TBor
                 defaultClasses,
                 baseClasses,
                 views,
-                texts,
                 baseKeys: baseKeys,
                 viewKeys: viewKeys,
-                textKeys: textKeys,
-                allKeys: new Set([...Array.from(baseKeys), ...Array.from(textKeys), ...Array.from(viewKeys)]),
+                allKeys: new Set([...Array.from(baseKeys), ...Array.from(viewKeys)]),
                 clearCache,
               };
             },
@@ -51,16 +44,13 @@ export function startTheme<TColors extends string, TSpacing extends string, TBor
   };
 }
 
-let vStyleCache: Map<string, ViewStyle> = new Map<string, ViewStyle>();
-let tStyleCache: Map<string, TextStyle> = new Map<string, TextStyle>();
+let vStyleCache: Map<string, CSSProperties> = new Map<string, CSSProperties>();
 
 let vClassCache: Map<string, Map<string, any>> = undefined!;
-let tClassCache: Map<string, Map<string, any>> = undefined!;
 let baseClassCache: Map<string, Map<string, any>> = undefined!;
 
 function clearCache() {
-  vStyleCache = new Map<string, ViewStyle>();
-  tStyleCache = new Map<string, TextStyle>();
+  vStyleCache = new Map<string, CSSProperties>();
   vClassCache = undefined!;
 }
 
@@ -69,12 +59,10 @@ function buildClassCache<
   TSpacing extends string,
   TBorderRadii extends string,
   TBaseClassesKeys extends string,
-  TViewsKeys extends string,
-  TTextsKeys extends string
->(theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>) {
+  TViewsKeys extends string
+>(theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>) {
   try {
     vClassCache = new Map();
-    tClassCache = new Map();
     baseClassCache = new Map();
 
     for (const baseClassKey in theme.baseClasses) {
@@ -95,10 +83,6 @@ function buildClassCache<
     for (const viewKey in theme.views) {
       vClassCache.set(viewKey, parseStyleStructure(theme, theme.views[viewKey]));
     }
-
-    for (const textKey in theme.texts) {
-      tClassCache.set(textKey, parseStyleStructure(theme, theme.texts[textKey]));
-    }
   } catch (ex) {
     console.error(ex);
   }
@@ -109,10 +93,9 @@ function parseStyleStructure<
   TSpacing extends string,
   TBorderRadii extends string,
   TBaseClassesKeys extends string,
-  TViewsKeys extends string,
-  TTextsKeys extends string
+  TViewsKeys extends string
 >(
-  theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>,
+  theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>,
   styleStructure: StyleStructure<TColors, TSpacing, TBorderRadii, TBaseClassesKeys>
 ) {
   const classCache = new Map();
@@ -145,13 +128,12 @@ function processStyle<
   TSpacing extends string,
   TBorderRadii extends string,
   TBaseClassesKeys extends string,
-  TViewsKeys extends string,
-  TTextsKeys extends string
+  TViewsKeys extends string
 >(
-  theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>,
-  classes: (TViewsKeys | TTextsKeys | TBaseClassesKeys | ClassKey)[],
+  theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>,
+  classes: (TViewsKeys | TBaseClassesKeys | ClassKey)[],
   classCache: Map<string, Map<string, any>>,
-  styleCache: Map<string, ViewStyle> | Map<string, TextStyle>,
+  styleCache: Map<string, CSSProperties>,
   debugStyle: boolean
 ) {
   const key = classes.map((e) => (typeof e === 'string' ? e : (e as ClassKey).key)).join(',');
@@ -197,16 +179,13 @@ export function useSafeStyle<
   TSpacing extends string,
   TBorderRadii extends string,
   TBaseClassesKeys extends string,
-  TViewsKeys extends string,
-  TTextsKeys extends string
+  TViewsKeys extends string
 >(
-  theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>
+  theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>
 ): {
   spacing: (spacing: TSpacing) => number | string;
   color: (color: TColors) => string;
-
-  text: (classes: (TTextsKeys | TBaseClassesKeys | ClassKey)[], debugStyle?: boolean) => TextStyle;
-  view: (classes: (TViewsKeys | TBaseClassesKeys | ClassKey)[], debugStyle?: boolean) => ViewStyle;
+  view: (classes: (TViewsKeys | TBaseClassesKeys | ClassKey)[], debugStyle?: boolean) => CSSProperties;
 } {
   if (!vClassCache) {
     buildClassCache(theme);
@@ -214,21 +193,12 @@ export function useSafeStyle<
   return (
     functionCache ??
     (functionCache = {
-      view: function (classes: (TViewsKeys | TBaseClassesKeys | ClassKey)[], debugStyle?: boolean): ViewStyle {
+      view: function (classes: (TViewsKeys | TBaseClassesKeys | ClassKey)[], debugStyle?: boolean): CSSProperties {
         return processStyle(
           theme,
           theme.defaultClasses.view ? [...theme.defaultClasses.view, ...classes] : classes,
           vClassCache,
           vStyleCache,
-          !!debugStyle
-        );
-      },
-      text: function (classes: (TTextsKeys | TBaseClassesKeys | ClassKey)[], debugStyle?: boolean): TextStyle {
-        return processStyle(
-          theme,
-          theme.defaultClasses.text ? [...theme.defaultClasses.text, ...classes] : classes,
-          tClassCache,
-          tStyleCache,
           !!debugStyle
         );
       },
@@ -293,75 +263,45 @@ export type SafeStylePropsPrefix<
     >[key];
   };
 
-export function makeTextProps<
-  TColors extends string,
-  TSpacing extends string,
-  TBorderRadii extends string,
-  TBaseClassesKeys extends string,
-  TViewsKeys extends string,
-  TTextsKeys extends string
->(
-  safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>
-): SafeStyleProps<TTextsKeys | TBaseClassesKeys, TColors, TSpacing, TBorderRadii> {
-  return undefined as any;
-}
 export function makeViewPropsPrefix<
   TPrefix extends string,
   TColors extends string,
   TSpacing extends string,
   TBorderRadii extends string,
   TBaseClassesKeys extends string,
-  TViewsKeys extends string,
-  TTextsKeys extends string
+  TViewsKeys extends string
 >(
-  safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>,
+  safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>,
   prefix: TPrefix
 ): SafeStylePropsPrefix<TPrefix, TViewsKeys | TBaseClassesKeys, TColors, TSpacing, TBorderRadii> {
   return undefined as any;
 }
-export function makeTextPropsPrefix<
-  TPrefix extends string,
-  TColors extends string,
-  TSpacing extends string,
-  TBorderRadii extends string,
-  TBaseClassesKeys extends string,
-  TViewsKeys extends string,
-  TTextsKeys extends string
->(
-  safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>,
-  prefix: TPrefix
-): SafeStylePropsPrefix<TPrefix, TTextsKeys | TBaseClassesKeys, TColors, TSpacing, TBorderRadii> {
-  return undefined as any;
-}
+
 export function makeViewProps<
   TColors extends string,
   TSpacing extends string,
   TBorderRadii extends string,
   TBaseClassesKeys extends string,
-  TViewsKeys extends string,
-  TTextsKeys extends string
+  TViewsKeys extends string
 >(
-  safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>
+  safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>
 ): SafeStyleProps<TViewsKeys | TBaseClassesKeys, TColors, TSpacing, TBorderRadii> {
   return undefined as any;
 }
 
 export function extractSafeStyleProps<
   T extends {[key: string]: any},
-  TType extends 'view' | 'text',
   TColors extends string,
   TSpacing extends string,
   TBorderRadii extends string,
   TBaseClassesKeys extends string,
-  TViewsKeys extends string,
-  TTextsKeys extends string
+  TViewsKeys extends string
 >(
-  safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>,
+  safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>,
   props: T,
-  type: TType,
   prefix?: string
 ) {
-  type KeyType = [TType] extends ['view'] ? TViewsKeys | TBaseClassesKeys : TTextsKeys | TBaseClassesKeys;
+  type KeyType = TViewsKeys | TBaseClassesKeys;
   let newProps = {...props};
   let keys: KeyType[] = [];
   let classKeys: ClassKey[] = [];
@@ -391,9 +331,8 @@ export function makeUseBespokeStyle<
   TBorderRadii extends string,
   TBaseClassesKeys extends string,
   TViewsKeys extends string,
-  TTextsKeys extends string,
   TBespokeClasses extends string
->(theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>) {
+>(theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>) {
   return <TBespokeStyles extends string>(
     classes: {
       [key in TBespokeStyles]: StyleStructure<TColors, TSpacing, TBorderRadii, TBaseClassesKeys>;

@@ -1,6 +1,6 @@
 # Safe Style
 
-A dependency-less solution to **safely** theme your react native apps.
+A dependency-less solution to **safely** theme your react apps.
 
 ## Principals
 - **Strict type safety**
@@ -20,13 +20,13 @@ These are both great libraries that have much fancier features that I fully reco
 With npm:
 
 ```bash
-$ npm install react-native-safe-schema --save
+$ npm install react-safe-schema --save
 ```
 
 With yarn:
 
 ```bash
-$ yarn add react-native-safe-schema
+$ yarn add react-safe-schema
 ```
 
 ## Example
@@ -42,7 +42,7 @@ $ yarn add react-native-safe-schema
 ### Define your theme
 
 ```ts
-import {startTheme} from 'react-native-safe-style';
+import {startTheme} from 'react-safe-style';
 export const SafeStyleTheme = startTheme({
   colors: {
     grey100: '#F8F8F8',
@@ -144,7 +144,7 @@ You can pass any react component and make it safely stylable, even imported comp
 You pass your theme into either makeView or makeText to support view styles and text styles respectively. You can name the resulting component however you'd like.  
 
 ```ts
-import {makeView, makeText} from 'react-native-safe-style';
+import {makeView, makeText} from 'react-safe-style';
 
  
 export const SView = makeView(SafeStyleTheme, View);
@@ -182,7 +182,7 @@ Sometimes you have a common set of classes and styles that are only used in a si
 
 First declare the useBespokeStyle hook by passing your theme into makeUseBespokeStyle:
 ```tsx theme.ts
-import {makeUseBespokeStyle} from 'react-native-safe-style';
+import {makeUseBespokeStyle} from 'react-safe-style';
 export const useBespokeStyle = makeUseBespokeStyle(SafeStyleTheme);
 ```
 
@@ -224,7 +224,7 @@ function CustomComponent(){
 Occasionally (but rarely) you will want better control over the styles in your custom component, for instance taking in separate class details to style separate parts, like in a button. 
 
 ```tsx theme.ts
-import {extractSafeStyleProps, makeTextPropsPrefix, makeViewProps, useSafeStyle} from 'react-native-safe-style';
+import {extractSafeStyleProps, makeTextPropsPrefix, makeViewProps, useSafeStyle} from 'react-safe-style';
 
 
 // the safe view style props type

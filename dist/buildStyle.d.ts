@@ -1,4 +1,4 @@
-import { TransformsStyle, TextStyle, ViewStyle } from 'react-native';
+import { CSSProperties } from 'react';
 import { AllProps } from './styleProps';
 import { SafeStyleSchema, StyleStructure } from './schema';
 export declare function startTheme<TColors extends string, TSpacing extends string, TBorderRadii extends string>(theme: {
@@ -14,10 +14,9 @@ export declare function startTheme<TColors extends string, TSpacing extends stri
 }): {
     addBaseClasses: <TBaseClassesKeys extends string>(baseClasses: { [className in TBaseClassesKeys]: AllProps<TColors, TSpacing, TBorderRadii>; }) => {
         addDefaultClasses: (defaultClasses: {
-            text?: TBaseClassesKeys[] | undefined;
             view?: TBaseClassesKeys[] | undefined;
         }) => {
-            addClasses: <TViewsKeys extends string, TTextsKeys extends string>(views: { [className_1 in TViewsKeys]: StyleStructure<TColors, TSpacing, TBorderRadii, TBaseClassesKeys>; }, texts: { [className_2 in TTextsKeys]: StyleStructure<TColors, TSpacing, TBorderRadii, TBaseClassesKeys>; }) => SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>;
+            addClasses: <TViewsKeys extends string>(views: { [className_1 in TViewsKeys]: StyleStructure<TColors, TSpacing, TBorderRadii, TBaseClassesKeys>; }) => SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>;
         };
     };
 };
@@ -26,11 +25,10 @@ declare type ClassKey = {
     property: string;
     value: any;
 };
-export declare function useSafeStyle<TColors extends string, TSpacing extends string, TBorderRadii extends string, TBaseClassesKeys extends string, TViewsKeys extends string, TTextsKeys extends string>(theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>): {
+export declare function useSafeStyle<TColors extends string, TSpacing extends string, TBorderRadii extends string, TBaseClassesKeys extends string, TViewsKeys extends string>(theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>): {
     spacing: (spacing: TSpacing) => number | string;
     color: (color: TColors) => string;
-    text: (classes: (TTextsKeys | TBaseClassesKeys | ClassKey)[], debugStyle?: boolean) => TextStyle;
-    view: (classes: (TViewsKeys | TBaseClassesKeys | ClassKey)[], debugStyle?: boolean) => ViewStyle;
+    view: (classes: (TViewsKeys | TBaseClassesKeys | ClassKey)[], debugStyle?: boolean) => CSSProperties;
 };
 export declare function SafeStyleProvider({ children, theme }: any): any;
 export declare type SafeStyleProps<TSafeStyleKeys extends string, TColor extends string, TSpacing extends string, TBorderRadii extends string> = {
@@ -46,23 +44,21 @@ export declare type SafeStylePropsPrefix<TPrefix extends string, TSafeStyleKeys 
 } & {
     [key in keyof AllProps<TColor, TSpacing, TBorderRadii> as `${TPrefix}${key}`]?: AllProps<TColor, TSpacing, TBorderRadii>[key];
 };
-export declare function makeTextProps<TColors extends string, TSpacing extends string, TBorderRadii extends string, TBaseClassesKeys extends string, TViewsKeys extends string, TTextsKeys extends string>(safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>): SafeStyleProps<TTextsKeys | TBaseClassesKeys, TColors, TSpacing, TBorderRadii>;
-export declare function makeViewPropsPrefix<TPrefix extends string, TColors extends string, TSpacing extends string, TBorderRadii extends string, TBaseClassesKeys extends string, TViewsKeys extends string, TTextsKeys extends string>(safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>, prefix: TPrefix): SafeStylePropsPrefix<TPrefix, TViewsKeys | TBaseClassesKeys, TColors, TSpacing, TBorderRadii>;
-export declare function makeTextPropsPrefix<TPrefix extends string, TColors extends string, TSpacing extends string, TBorderRadii extends string, TBaseClassesKeys extends string, TViewsKeys extends string, TTextsKeys extends string>(safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>, prefix: TPrefix): SafeStylePropsPrefix<TPrefix, TTextsKeys | TBaseClassesKeys, TColors, TSpacing, TBorderRadii>;
-export declare function makeViewProps<TColors extends string, TSpacing extends string, TBorderRadii extends string, TBaseClassesKeys extends string, TViewsKeys extends string, TTextsKeys extends string>(safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>): SafeStyleProps<TViewsKeys | TBaseClassesKeys, TColors, TSpacing, TBorderRadii>;
+export declare function makeViewPropsPrefix<TPrefix extends string, TColors extends string, TSpacing extends string, TBorderRadii extends string, TBaseClassesKeys extends string, TViewsKeys extends string>(safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>, prefix: TPrefix): SafeStylePropsPrefix<TPrefix, TViewsKeys | TBaseClassesKeys, TColors, TSpacing, TBorderRadii>;
+export declare function makeViewProps<TColors extends string, TSpacing extends string, TBorderRadii extends string, TBaseClassesKeys extends string, TViewsKeys extends string>(safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>): SafeStyleProps<TViewsKeys | TBaseClassesKeys, TColors, TSpacing, TBorderRadii>;
 export declare function extractSafeStyleProps<T extends {
     [key: string]: any;
-}, TType extends 'view' | 'text', TColors extends string, TSpacing extends string, TBorderRadii extends string, TBaseClassesKeys extends string, TViewsKeys extends string, TTextsKeys extends string>(safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>, props: T, type: TType, prefix?: string): {
+}, TColors extends string, TSpacing extends string, TBorderRadii extends string, TBaseClassesKeys extends string, TViewsKeys extends string>(safeStyle: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>, props: T, prefix?: string): {
     newProps: T;
-    keys: (ClassKey | ([TType] extends ["view"] ? TBaseClassesKeys | TViewsKeys : TBaseClassesKeys | TTextsKeys))[];
+    keys: (ClassKey | (TBaseClassesKeys | TViewsKeys))[];
 };
-export declare function makeUseBespokeStyle<TColors extends string, TSpacing extends string, TBorderRadii extends string, TBaseClassesKeys extends string, TViewsKeys extends string, TTextsKeys extends string, TBespokeClasses extends string>(theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys, TTextsKeys>): <TBespokeStyles extends string>(classes: { [key in TBespokeStyles]: StyleStructure<TColors, TSpacing, TBorderRadii, TBaseClassesKeys>; }) => { [key_1 in TBespokeStyles]: ({ [e in TBespokeStyles]: true; } & import("./styleProps").BackgroundColorProps<TColors> & import("./styleProps").ColorProps<TColors> & import("./styleProps").OpacityProps & import("./styleProps").SpacingProps<TSpacing> & import("./styleProps").TypographyProps & import("./styleProps").LayoutProps & import("./styleProps").PositionProps & {
-    borderBottomWidth?: number | undefined;
-    borderLeftWidth?: number | undefined;
-    borderRightWidth?: number | undefined;
-    borderStyle?: "solid" | "dotted" | "dashed" | undefined;
-    borderTopWidth?: number | undefined;
-    borderWidth?: number | undefined;
+export declare function makeUseBespokeStyle<TColors extends string, TSpacing extends string, TBorderRadii extends string, TBaseClassesKeys extends string, TViewsKeys extends string, TBespokeClasses extends string>(theme: SafeStyleSchema<TColors, TSpacing, TBorderRadii, TBaseClassesKeys, TViewsKeys>): <TBespokeStyles extends string>(classes: { [key in TBespokeStyles]: StyleStructure<TColors, TSpacing, TBorderRadii, TBaseClassesKeys>; }) => { [key_1 in TBespokeStyles]: ({ [e in TBespokeStyles]: true; } & import("./styleProps").BackgroundColorProps<TColors> & import("./styleProps").ColorProps<TColors> & import("./styleProps").OpacityProps & import("./styleProps").SpacingProps<TSpacing> & import("./styleProps").TypographyProps & import("./styleProps").LayoutProps & import("./styleProps").PositionProps & {
+    borderBottomWidth?: import("csstype").Property.BorderBottomWidth<string | number> | undefined;
+    borderLeftWidth?: import("csstype").Property.BorderLeftWidth<string | number> | undefined;
+    borderRightWidth?: import("csstype").Property.BorderRightWidth<string | number> | undefined;
+    borderStyle?: import("csstype").Property.BorderStyle | undefined;
+    borderTopWidth?: import("csstype").Property.BorderTopWidth<string | number> | undefined;
+    borderWidth?: import("csstype").Property.BorderWidth<string | number> | undefined;
 } & {
     borderColor?: import("./styleProps").RawColor | TColors | undefined;
     borderTopColor?: import("./styleProps").RawColor | TColors | undefined;
@@ -75,23 +71,5 @@ export declare function makeUseBespokeStyle<TColors extends string, TSpacing ext
     borderBottomRightRadius?: number | TBorderRadii | undefined;
     borderTopLeftRadius?: number | TBorderRadii | undefined;
     borderTopRightRadius?: number | TBorderRadii | undefined;
-} & {
-    shadowOpacity?: number | undefined;
-    shadowOffset?: {
-        width: number;
-        height: number;
-    } | undefined;
-    shadowRadius?: number | undefined;
-    elevation?: number | undefined;
-} & {
-    shadowColor?: import("./styleProps").RawColor | TColors | undefined;
-} & {
-    textShadowOffset?: {
-        width: number;
-        height: number;
-    } | undefined;
-    textShadowRadius?: number | undefined;
-} & {
-    textShadowColor?: import("./styleProps").RawColor | TColors | undefined;
-} & import("./styleProps").TintColorProps<TColors> & TransformsStyle)[]; };
+})[]; };
 export {};

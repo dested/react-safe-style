@@ -101,23 +101,8 @@ var borderColorProperties = {
     borderLeftColor: true,
     borderBottomColor: true,
 };
-var shadowProperties = {
-    shadowOpacity: true,
-    shadowOffset: true,
-    shadowRadius: true,
-    elevation: true,
-};
-var textShadowProperties = {
-    textShadowOffset: true,
-    textShadowRadius: true,
-};
-var tintColorProperties = {
-    tintColor: true,
-};
 exports.transformProperty = {};
 exports.transformPropertyKey = {};
-exports.transformProperty['textShadowColor'] = function (theme, value) { var _a; return (_a = theme.colors[value]) !== null && _a !== void 0 ? _a : value; };
-exports.transformProperty['shadowColor'] = function (theme, value) { var _a; return (_a = theme.colors[value]) !== null && _a !== void 0 ? _a : value; };
 exports.transformProperty['backgroundColor'] = function (theme, value) { var _a; return (_a = theme.colors[value]) !== null && _a !== void 0 ? _a : value; };
 exports.transformProperty['color'] = function (theme, value) { var _a; return (_a = theme.colors[value]) !== null && _a !== void 0 ? _a : value; };
 for (var _i = 0, _a = utils_1.safeKeys(borderRadiusProperties); _i < _a.length; _i++) {
@@ -137,9 +122,5 @@ for (var _f = 0, _g = utils_1.safeKeys(borderColorProperties); _f < _g.length; _
     var key = _g[_f];
     exports.transformProperty[key] = function (theme, value) { var _a; return (_a = theme.colors[value]) !== null && _a !== void 0 ? _a : value; };
 }
-for (var _h = 0, _j = utils_1.safeKeys(tintColorProperties); _h < _j.length; _h++) {
-    var key = _j[_h];
-    exports.transformProperty[key] = function (theme, value) { var _a; return (_a = theme.colors[value]) !== null && _a !== void 0 ? _a : value; };
-}
 exports.transformKeys = new Set(utils_1.safeKeys(exports.transformProperty));
-exports.allProperties = new Set(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], utils_1.safeKeys(spacingProperties)), utils_1.safeKeys(typographyProperties)), utils_1.safeKeys(layoutProperties)), utils_1.safeKeys(positionProperties)), utils_1.safeKeys(borderProperties)), utils_1.safeKeys(borderRadiusProperties)), utils_1.safeKeys(borderColorProperties)), utils_1.safeKeys(shadowProperties)), utils_1.safeKeys(textShadowProperties)), utils_1.safeKeys(tintColorProperties)), Array.from(exports.transformKeys)));
+exports.allProperties = new Set(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], utils_1.safeKeys(spacingProperties)), utils_1.safeKeys(typographyProperties)), utils_1.safeKeys(layoutProperties)), utils_1.safeKeys(positionProperties)), utils_1.safeKeys(borderProperties)), utils_1.safeKeys(borderRadiusProperties)), utils_1.safeKeys(borderColorProperties)), Array.from(exports.transformKeys)));

@@ -1,6 +1,6 @@
-import {FlexStyle, TextStyle, TransformsStyle, ViewStyle} from 'react-native';
 import {safeKeys} from './utils';
 import {BaseThemeSchema} from './schema';
+import {CSSProperties} from 'react';
 
 const spacingProperties = {
   margin: true,
@@ -103,21 +103,6 @@ const borderColorProperties = {
   borderBottomColor: true,
 };
 
-const shadowProperties = {
-  shadowOpacity: true,
-  shadowOffset: true,
-  shadowRadius: true,
-  elevation: true,
-};
-
-const textShadowProperties = {
-  textShadowOffset: true,
-  textShadowRadius: true,
-};
-const tintColorProperties = {
-  tintColor: true,
-};
-
 export type RawColor = `#${string}` | `hsl(${string})` | `rgba(${string})` | `rgb(${string})`;
 
 export interface ColorProps<TColors extends string> {
@@ -140,19 +125,19 @@ export type SpacingProps<TSpacing extends string> = {
 };
 
 export type TypographyProps = {
-  [Key in keyof typeof typographyProperties]?: TextStyle[Key];
+  [Key in keyof typeof typographyProperties]?: CSSProperties[Key];
 };
 
 export type LayoutProps = {
-  [Key in keyof typeof layoutProperties]?: FlexStyle[Key];
+  [Key in keyof typeof layoutProperties]?: CSSProperties[Key];
 };
 
 export type PositionProps = {
-  [Key in keyof typeof positionProperties]?: FlexStyle[Key];
+  [Key in keyof typeof positionProperties]?: CSSProperties[Key];
 };
 
 export type BorderProps<TColors extends string, TBorderRadii extends string> = {
-  [Key in keyof typeof borderProperties]?: ViewStyle[Key];
+  [Key in keyof typeof borderProperties]?: CSSProperties[Key];
 } &
   {
     [Key in keyof typeof borderColorProperties]?: TColors | RawColor;
@@ -161,29 +146,10 @@ export type BorderProps<TColors extends string, TBorderRadii extends string> = {
     [Key in keyof typeof borderRadiusProperties]?: TBorderRadii | number;
   };
 
-export type ShadowProps<TColors extends string> = {
-  [Key in keyof typeof shadowProperties]?: ViewStyle[Key];
-} & {
-  shadowColor?: TColors | RawColor;
-};
-
-export type TextShadowProps<TColors extends string> = {
-  [Key in keyof typeof textShadowProperties]?: TextStyle[Key];
-} & {
-  textShadowColor?: TColors | RawColor;
-};
-export type TintColorProps<TColors extends string> = {
-  [Key in keyof typeof tintColorProperties]?: TColors | RawColor;
-};
-
 export const transformProperty: {
   [key: string]: (theme: BaseThemeSchema<any, any, any>, value: string) => number | string;
 } = {};
 export const transformPropertyKey: {[key: string]: string} = {};
-transformProperty['textShadowColor'] = (theme: BaseThemeSchema<any, any, any>, value: string) =>
-  theme.colors[value] ?? value;
-transformProperty['shadowColor'] = (theme: BaseThemeSchema<any, any, any>, value: string) =>
-  theme.colors[value] ?? value;
 transformProperty['backgroundColor'] = (theme: BaseThemeSchema<any, any, any>, value: string) =>
   theme.colors[value] ?? value;
 transformProperty['color'] = (theme: BaseThemeSchema<any, any, any>, value: string) => theme.colors[value] ?? value;
@@ -200,9 +166,6 @@ for (const key of safeKeys(spacingPropertiesShorthand)) {
 for (const key of safeKeys(borderColorProperties)) {
   transformProperty[key] = (theme: BaseThemeSchema<any, any, any>, value: string) => theme.colors[value] ?? value;
 }
-for (const key of safeKeys(tintColorProperties)) {
-  transformProperty[key] = (theme: BaseThemeSchema<any, any, any>, value: string) => theme.colors[value] ?? value;
-}
 export const transformKeys = new Set(safeKeys(transformProperty));
 
 export const allProperties = new Set([
@@ -213,9 +176,6 @@ export const allProperties = new Set([
   ...safeKeys(borderProperties),
   ...safeKeys(borderRadiusProperties),
   ...safeKeys(borderColorProperties),
-  ...safeKeys(shadowProperties),
-  ...safeKeys(textShadowProperties),
-  ...safeKeys(tintColorProperties),
   ...Array.from(transformKeys),
 ]);
 
@@ -227,8 +187,4 @@ export type AllProps<TColors extends string, TSpacing extends string, TBorderRad
     TypographyProps &
     LayoutProps &
     PositionProps &
-    BorderProps<TColors, TBorderRadii> &
-    ShadowProps<TColors> &
-    TextShadowProps<TColors> &
-    TintColorProps<TColors> &
-    TransformsStyle;
+    BorderProps<TColors, TBorderRadii>;

@@ -21,8 +21,7 @@ export type SafeStyleSchema<
   TSpacing extends string,
   TBorderRadii extends string,
   TBaseClassesKeys extends string,
-  TViewsKeys extends string,
-  TTextsKeys extends string
+  TViewsKeys extends string
 > = {
   colors: {[key in TColors]: string};
   spacing: {[key in TSpacing]: number | string};
@@ -34,12 +33,8 @@ export type SafeStyleSchema<
   views: {
     [className in TViewsKeys]: StyleStructure<TColors, TSpacing, TBorderRadii, TBaseClassesKeys>;
   };
-  texts: {
-    [className in TTextsKeys]: StyleStructure<TColors, TSpacing, TBorderRadii, TBaseClassesKeys>;
-  };
   allKeys: Set<string>;
   baseKeys: Set<string>;
   viewKeys: Set<string>;
-  textKeys: Set<string>;
   clearCache: () => void;
 };

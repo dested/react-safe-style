@@ -16,7 +16,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
     return to;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makeUseBespokeStyle = exports.extractSafeStyleProps = exports.makeViewProps = exports.makeTextPropsPrefix = exports.makeViewPropsPrefix = exports.makeTextProps = exports.SafeStyleProvider = exports.useSafeStyle = exports.startTheme = void 0;
+exports.makeUseBespokeStyle = exports.extractSafeStyleProps = exports.makeViewProps = exports.makeViewPropsPrefix = exports.SafeStyleProvider = exports.useSafeStyle = exports.startTheme = void 0;
 var react_1 = require("react");
 var styleProps_1 = require("./styleProps");
 var utils_1 = require("./utils");
@@ -26,10 +26,9 @@ function startTheme(theme) {
             return {
                 addDefaultClasses: function (defaultClasses) {
                     return {
-                        addClasses: function (views, texts) {
+                        addClasses: function (views) {
                             var baseKeys = new Set(Object.keys(baseClasses));
                             var viewKeys = new Set(Object.keys(views));
-                            var textKeys = new Set(Object.keys(texts));
                             return {
                                 borderRadii: theme.borderRadii,
                                 colors: theme.colors,
@@ -37,11 +36,9 @@ function startTheme(theme) {
                                 defaultClasses: defaultClasses,
                                 baseClasses: baseClasses,
                                 views: views,
-                                texts: texts,
                                 baseKeys: baseKeys,
                                 viewKeys: viewKeys,
-                                textKeys: textKeys,
-                                allKeys: new Set(__spreadArray(__spreadArray(__spreadArray([], Array.from(baseKeys)), Array.from(textKeys)), Array.from(viewKeys))),
+                                allKeys: new Set(__spreadArray(__spreadArray([], Array.from(baseKeys)), Array.from(viewKeys))),
                                 clearCache: clearCache,
                             };
                         },
@@ -53,19 +50,15 @@ function startTheme(theme) {
 }
 exports.startTheme = startTheme;
 var vStyleCache = new Map();
-var tStyleCache = new Map();
 var vClassCache = undefined;
-var tClassCache = undefined;
 var baseClassCache = undefined;
 function clearCache() {
     vStyleCache = new Map();
-    tStyleCache = new Map();
     vClassCache = undefined;
 }
 function buildClassCache(theme) {
     try {
         vClassCache = new Map();
-        tClassCache = new Map();
         baseClassCache = new Map();
         for (var baseClassKey in theme.baseClasses) {
             baseClassCache.set(baseClassKey, new Map());
@@ -84,9 +77,6 @@ function buildClassCache(theme) {
         }
         for (var viewKey in theme.views) {
             vClassCache.set(viewKey, parseStyleStructure(theme, theme.views[viewKey]));
-        }
-        for (var textKey in theme.texts) {
-            tClassCache.set(textKey, parseStyleStructure(theme, theme.texts[textKey]));
         }
     }
     catch (ex) {
@@ -165,9 +155,6 @@ function useSafeStyle(theme) {
         view: function (classes, debugStyle) {
             return processStyle(theme, theme.defaultClasses.view ? __spreadArray(__spreadArray([], theme.defaultClasses.view), classes) : classes, vClassCache, vStyleCache, !!debugStyle);
         },
-        text: function (classes, debugStyle) {
-            return processStyle(theme, theme.defaultClasses.text ? __spreadArray(__spreadArray([], theme.defaultClasses.text), classes) : classes, tClassCache, tStyleCache, !!debugStyle);
-        },
         color: function (color) {
             return theme.colors[color];
         },
@@ -186,23 +173,15 @@ function SafeStyleProvider(_a) {
 }
 exports.SafeStyleProvider = SafeStyleProvider;
 function assertType(assertion) { }
-function makeTextProps(safeStyle) {
-    return undefined;
-}
-exports.makeTextProps = makeTextProps;
 function makeViewPropsPrefix(safeStyle, prefix) {
     return undefined;
 }
 exports.makeViewPropsPrefix = makeViewPropsPrefix;
-function makeTextPropsPrefix(safeStyle, prefix) {
-    return undefined;
-}
-exports.makeTextPropsPrefix = makeTextPropsPrefix;
 function makeViewProps(safeStyle) {
     return undefined;
 }
 exports.makeViewProps = makeViewProps;
-function extractSafeStyleProps(safeStyle, props, type, prefix) {
+function extractSafeStyleProps(safeStyle, props, prefix) {
     var newProps = __assign({}, props);
     var keys = [];
     var classKeys = [];
